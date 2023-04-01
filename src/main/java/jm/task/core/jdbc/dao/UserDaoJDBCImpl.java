@@ -8,43 +8,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl extends Util implements UserDao {
-    Connection connection = getConnection();
+    public static final Connection connection = getConnection();
     public UserDaoJDBCImpl() {}
 
 
 // Создание таблицы для User(ов) – не должно приводить к исключению, если такая таблица уже существует
-    public void createUsersTable() {
+    public void createUsersTable() throws SQLException {
 
         String sqlCommand = "CREATE TABLE IF NOT EXISTS users (Id bigint PRIMARY KEY AUTO_INCREMENT, Name VARCHAR(200), LastName VARCHAR(200), Age tinyint)";
-        try {
-            Statement statement = connection.createStatement();
+        try (Connection connection = getConnection();
+                Statement statement = connection.createStatement();){
             statement.executeUpdate(sqlCommand);
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.close();
         }
     }
 
 // Удаление таблицы User(ов) – не должно приводить к исключению, если таблицы не существует
-    public void dropUsersTable() {
+    public void dropUsersTable() throws SQLException {
         String sqlCommand = "TRUNCATE firstBase.users";
-        System.out.println("Таблица удалена");
-        try {
-            Statement statement = connection.createStatement();
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()) {
             statement.executeUpdate(sqlCommand);
+            System.out.println("Таблица удалена");
 
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Таблица не удалена");
+        } finally {
+            if (connection != null)
+                connection.close();
         }
     }
 
 //   Добавление User в таблицу
-    public void saveUser(String name, String lastName, byte age) {
+    public void saveUser(String name, String lastName, byte age) throws SQLException {
         String sqlCommand = "INSERT INTO users (Name, LastName, Age) VALUES(?, ?, ?)";
 
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlCommand);
+        try(Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlCommand)) {
 
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, lastName);
@@ -53,29 +59,33 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.close();
         }
     }
 
 // Удаление User из таблицы ( по id )
-    public void removeUserById(long id) {
+    public void removeUserById(long id) throws SQLException {
         String sqlCommand = "DELETE FROM users WHERE Id=?";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlCommand);
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sqlCommand)){
             preparedStatement.setLong(1, id);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            connection.close();
         }
     }
 
 
 //получение всех User
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers() throws SQLException {
         List<User> userList = new ArrayList<>();
         String sqlCommand = "SELECT Id, Name, LastName, Age FROM users";
-        try {
-            Statement statement = connection.createStatement();
+        try (Connection connection = getConnection();
+             Statement statement = connection.createStatement()){
             ResultSet resultSet = statement.executeQuery(sqlCommand);
-
             while (resultSet.next()) {
                 User user = new User();
                 user.setId(resultSet.getLong("Id"));
@@ -87,22 +97,30 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.close();
+
+            return userList;
+
         }
-        return userList;
     }
 
 
     // Очистка содержания таблицы
-    public void cleanUsersTable() {
+    public void cleanUsersTable() throws SQLException {
         String sqlCommand = "DELETE FROM firstBase.users";
-        try {
-            Statement statement = connection.createStatement();
+        try(Connection connection = getConnection();
+            Statement statement = connection.createStatement()) {
             statement.executeUpdate(sqlCommand);
             System.out.println("Очищено");
 
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Не очищена");
+        } finally {
+            if (connection != null)
+                connection.close();
         }
     }
 }

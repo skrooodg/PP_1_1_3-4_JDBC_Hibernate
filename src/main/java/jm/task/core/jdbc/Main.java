@@ -1,7 +1,7 @@
 package jm.task.core.jdbc;
 
 import jm.task.core.jdbc.service.UserServiceImpl;
-import jm.task.core.jdbc.util.Util;
+
 
 import java.sql.SQLException;
 
@@ -16,6 +16,7 @@ public class Main {
         user.saveUser("Ramzes", "Yunitsin", (byte) 8);
         user.saveUser("Markiz", "Yunitsin", (byte) 7);
         user.saveUser("Foxford", "Yunitsin", (byte) 2);
+        user.removeUserById(1);
         user.getAllUsers();
         user.cleanUsersTable();
         user.dropUsersTable();

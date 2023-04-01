@@ -6,13 +6,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Util {
-    //private static Connection connection;
     private static final String DB_Driver = "com.mysql.cj.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost/firstbase";
     private static final String DB_Username = "root";
     private static final String DB_Password = "root";
 
-    public Connection getConnection() {
+    public static Connection getConnection() {
         Connection connection = null;
         try {
             Class.forName(DB_Driver);
