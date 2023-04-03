@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl extends Util implements UserDao {
-    public static final Connection connection = getConnection();
+    private static final Connection connection = getConnection();
     public UserDaoJDBCImpl() {}
 
 
@@ -22,9 +22,6 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (connection != null)
-                connection.close();
         }
     }
 
@@ -39,9 +36,6 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Таблица не удалена");
-        } finally {
-            if (connection != null)
-                connection.close();
         }
     }
 
@@ -59,9 +53,6 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (connection != null)
-                connection.close();
         }
     }
 
@@ -73,8 +64,6 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
             preparedStatement.setLong(1, id);
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            connection.close();
         }
     }
 
@@ -97,13 +86,8 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            if (connection != null)
-                connection.close();
-
-            return userList;
-
         }
+            return userList;
     }
 
 
@@ -118,9 +102,6 @@ public class UserDaoJDBCImpl extends Util implements UserDao {
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Не очищена");
-        } finally {
-            if (connection != null)
-                connection.close();
         }
     }
 }
